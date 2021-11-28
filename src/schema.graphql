@@ -1,0 +1,229 @@
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  middleName: String
+  userName: String!
+  address: Address!
+  notes: [Note!]
+  created: Date!
+  lastUpdate: Date!
+}
+
+input SignupInput {
+  firstName: String!
+  lastName: String!
+  middleName: String
+  userName: String!
+  address: CreateAddressInput!
+  password: String!
+}
+
+input LoginInput {
+  userName: String
+  email: String
+  password: String!
+}
+
+input UpdateUserInput {
+  firstName: String
+  lastName: String
+  middleName: String
+  userName: String
+  address: UpdateAddressInput
+  password: String!
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type Address {
+  id: ID!
+  email: Email!
+  phone: Phone!
+  mobile: Phone
+}
+
+input CreateAddressInput {
+  email: Email!
+  phone: Phone!
+  mobile: Phone
+}
+
+input UpdateAddressInput {
+  email: Email
+  phone: Phone
+  mobile: Phone
+}
+
+type Mutation {
+  signup(input: SignupInput): AuthPayload
+  login(input: LoginInput): AuthPayload
+  updateUser(input: UpdateUserInput): User!
+  deleteUser(input: DeleteUserInput): User
+  createNote(note: CreateNoteInput): Note
+  updateNote(note: UpdateNoteInput): Note
+  deleteNote(note: DeleteNoteInput): Note!
+  createPage(note: CreatePageInput): Page
+  updatePage(note: UpdatePageInput): Page
+  deletePage(note: DeletePageInput): Page
+}
+
+type Query {
+  getUser(user: GetUserInput): User
+  listUsers(filter: TableUserFilterInput, limit: Int, skip: Int): UserConnection
+  getNote(note: GetNoteInput): Note
+  listNotes(filter: TableNoteFilterInput, limit: Int, skip: Int): NoteConnection
+  getPage(page: GetPageInput): Page
+  listPages(filter: TablePageFilterInput, limit: Int, skip: Int): PageConnection
+}
+
+type Note {
+  id: ID!
+  subject: String!
+  owner: Owner!
+  pages: [Page!]
+  created: Date!
+  lastUpdate: Date!
+}
+
+input CreateNoteInput {
+  subject: String!
+}
+
+input UpdateNoteInput {
+  subject: String
+}
+
+input DeleteNoteInput {
+  id: ID!
+}
+
+type Page {
+  id: ID!
+  title: String!
+  content: String!
+  created: Date!
+  lastUpdate: Date!
+}
+
+input CreatePageInput {
+  title: String
+  content: String!
+}
+
+input UpdatePageInput {
+  title: String
+  content: String
+}
+
+input DeletePageInput {
+  id: ID!
+}
+
+# filterInputs
+
+input TableIDFilterInput {
+  not: ID
+  equals: ID
+  lte: ID
+  lt: ID
+  gte: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input TableStringFilterInput {
+  not: String
+  equals: String
+  in: String
+  notIn: String
+  lte: String
+  lt: String
+  gte: String
+  gt: String
+  contains: String
+  search: String
+  mode: String
+  startsWith: String
+  endsWith: String
+}
+
+input TableIntFilterInput {
+  not: Int
+  equals: Int
+  lte: Int
+  lt: Int
+  gte: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input TableFloatFilterInput {
+  not: Float
+  equals: Float
+  lte: Float
+  lt: Float
+  gte: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input TableBooleanFilterInput {
+  not: Boolean
+  equals: Boolean
+}
+
+input TableAddressFilterInput {
+  id: TableIDFilterInput
+  email: TableStringFilterInput
+  phone: TableStringFilterInput
+  mobile: TableStringFilterInput
+}
+
+input TableUserFilterInput {
+  id: TableIDFilterInput
+  firstName: TableStringFilterInput
+  lastName: TableStringFilterInput
+  middleName: TableStringFilterInput
+  userName: TableStringFilterInput
+  address: TableAddressFilterInput
+  notes: TableNoteFilterInput
+  created: TableStringFilterInput
+  lastUpdate: TableStringFilterInput
+}
+
+input TableNoteFilterInput {
+  id: TableIDFilterInput
+  subject: TableStringFilterInput
+  owner: TableUserFilterInput
+  pages: TablePageFilterInput
+  created: TableStringFilterInput
+  lastUpdate: TableStringFilterInput
+}
+
+input TablePageFilterInput {
+  id: TableIDFilterInput
+  subject: TableStringFilterInput
+  owner: TableUserFilterInput
+  pages: TablePageFilterInput
+  created: TableStringFilterInput
+  lastUpdate: TableStringFilterInput
+}
+
+scalar Date
+scalar Email
+scalar Phone
