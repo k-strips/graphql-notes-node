@@ -38,6 +38,15 @@ input DeleteUserInput {
   id: ID!
 }
 
+input GetUserInput {
+  id: ID!
+}
+
+type UserConnection {
+  items: [User!]
+  totalCount: Int
+}
+
 type AuthPayload {
   token: String
   user: User
@@ -70,8 +79,8 @@ type Mutation {
   createNote(note: CreateNoteInput): Note
   updateNote(note: UpdateNoteInput): Note
   deleteNote(note: DeleteNoteInput): Note!
-  createPage(note: CreatePageInput): Page
-  updatePage(note: UpdatePageInput): Page
+  addPage(note: AddPageInput): Page
+  editPage(note: EditPageInput): Page
   deletePage(note: DeletePageInput): Page
 }
 
@@ -87,10 +96,15 @@ type Query {
 type Note {
   id: ID!
   subject: String!
-  owner: Owner!
+  owner: User!
   pages: [Page!]
   created: Date!
   lastUpdate: Date!
+}
+
+type NoteConnection {
+  items: [Note!]
+  totalCount: Int
 }
 
 input CreateNoteInput {
@@ -105,6 +119,10 @@ input DeleteNoteInput {
   id: ID!
 }
 
+input GetNoteInput {
+  id: ID!
+}
+
 type Page {
   id: ID!
   title: String!
@@ -113,17 +131,26 @@ type Page {
   lastUpdate: Date!
 }
 
-input CreatePageInput {
+type PageConnection {
+  items: [Page!]
+  totalCount: Int
+}
+
+input AddPageInput {
   title: String
   content: String!
 }
 
-input UpdatePageInput {
+input EditPageInput {
   title: String
   content: String
 }
 
 input DeletePageInput {
+  id: ID!
+}
+
+input GetPageInput {
   id: ID!
 }
 
