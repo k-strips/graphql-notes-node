@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport')
+, localStrategy = require('passport-local').Strategy;
 const { ApolloServer } = require('apollo-server-express');
 const {
   GraphQLUpload,

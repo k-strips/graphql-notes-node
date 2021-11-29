@@ -6,8 +6,8 @@ type User {
   userName: String!
   address: Address!
   notes: [Note!]
-  created: Date!
-  lastUpdate: Date!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 input SignupInput {
@@ -26,12 +26,13 @@ input LoginInput {
 }
 
 input UpdateUserInput {
+  id: ID!
   firstName: String
   lastName: String
   middleName: String
   userName: String
   address: UpdateAddressInput
-  password: String!
+  password: String
 }
 
 input DeleteUserInput {

@@ -1,6 +1,6 @@
 const getUser = async (parent, args, context, info) => {
     try {
-        console.log("getUser")
+        return await context.prisma.user.findUnique({where: {id: args.user.id}})
     } catch (error) {
         return error
     }
@@ -8,7 +8,7 @@ const getUser = async (parent, args, context, info) => {
 
 const listUsers = async (parent, args, context, info) => {
     try {
-        console.log("listUsers")
+        return await context.prisma.user.findMany({where: args.filter, skip:args.skip, take:args.limit})
     } catch (error) {
         return error
     }
