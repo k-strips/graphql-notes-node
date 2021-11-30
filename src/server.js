@@ -18,6 +18,7 @@ const prisma = new PrismaClient();
 
 // local imports
 const resolvers = require('./resolvers');
+const {getUserId} = require('../src/utils')
 
 async function startApolloServer() {
   const app = express();
@@ -32,6 +33,7 @@ async function startApolloServer() {
       return {
         ...req,
         prisma,
+        userId: req && req.headers.authorization ? getUserId(req) : null
       }
     },
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

@@ -80,9 +80,9 @@ type Mutation {
   createNote(note: CreateNoteInput): Note
   updateNote(note: UpdateNoteInput): Note
   deleteNote(note: DeleteNoteInput): Note!
-  addPage(note: AddPageInput): Page
-  editPage(note: EditPageInput): Page
-  deletePage(note: DeletePageInput): Page
+  addPage(page: AddPageInput): Page
+  editPage(page: EditPageInput): Page
+  deletePage(page: DeletePageInput): Page
 }
 
 type Query {
@@ -145,6 +145,7 @@ input AddPageInput {
 }
 
 input EditPageInput {
+  id: ID!
   title: String
   body: String
 }

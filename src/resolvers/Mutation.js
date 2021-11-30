@@ -66,7 +66,7 @@ const login = async (parent, args, context, info) => {
             throw new Error(`password not valid`)
         }
 
-        const token = jwt.sign({userId: user.id}, SECRET_KEY)
+        const token = jwt.sign({userId: user[0].id}, SECRET_KEY)
 
         return {
             token,
@@ -100,13 +100,16 @@ const updateUser = async (parent, args, context, info) => {
 
 const deleteUser = async (parent, args, context, info) => {
     try {
-        let notes = await context.prisma.note.delete({
-            where: {userId: ""}
+        const {id} = context.args
+        let notes = context.prisma.note.deleteMany({
+            where: {userId: id}
         });
 
-        let address = await context.prisma.address.delete({
-            where: {userId: ""}
+        let address = context.prisma.address.delete({
+            where: {userId: id}
         });
+
+        const transaction = context.prisma.$transaction([notes, address])
     } catch (error) {
         return error
     }
@@ -145,7 +148,11 @@ const updateNote = async (parent, args, context, info) => {
 
 const deleteNote = async (parent, args, context, info) => {
     try {
-        console.log("deleteNote")
+        const {id} = args.note;
+        let deletePages = context.prisma.page.deleteMany({where: {noteId: id}});
+        let note = context.prisma.note.delete({where: {id}})
+
+        return await context.prisma.$transaction([deletePages, note])
     } catch (error) {
         return error
     }
@@ -153,14 +160,14 @@ const deleteNote = async (parent, args, context, info) => {
 
 const addPage = async (parent, args, context, info) => {
     try {
-        const {title, body} = args.note;
+        const {title, body, noteId} = args.page;
         return await context.prisma.page.create({
             data: {
                 title,
                 body,
                 note: {
                     connect: {
-                        id: "98bcab47-3f8b-4c6b-b4da-0aec082ea057"
+                        id: noteId
                     }
                 }
             }
@@ -172,10 +179,14 @@ const addPage = async (parent, args, context, info) => {
 
 const editPage = async (parent, args, context, info) => {
     try {
+        const {id, title, body} = args.page;
         return await context.prisma.page.update({
-            where: {id: args.page.id},
+            where: {
+                id
+            },
             data: {
-                ...args.page
+                title,
+                body
             }
         })
     } catch (error) {
@@ -185,7 +196,9 @@ const editPage = async (parent, args, context, info) => {
 
 const deletePage = async (parent, args, context, info) => {
     try {
-        console.log("deletePage")
+        return await context.prisma.page.delete({
+            where: {id: args.page.id}
+        })
     } catch (error) {
         return error
     }
