@@ -18,12 +18,13 @@ model User {
   firstName  String   @db.VarChar(16)
   lastName   String   @db.VarChar(16)
   middleName String?  @db.VarChar(16)
-  userName   String   @db.VarChar(16)
+  userName   String   @unique @db.VarChar(16)
   address    Address?
   password   String   @db.VarChar(128)
   notes      Note[]
   createdAt  DateTime @default(now()) @db.Timestamptz
   updatedAt  DateTime @default(now()) @db.Timestamptz
+
 }
 
 model Note {
@@ -32,7 +33,7 @@ model Note {
   pages     Page[]
   createdAt DateTime @default(now()) @db.Timestamptz
   updatedAt DateTime @default(now()) @db.Timestamptz
-  user      User?    @relation(fields: [userId], references: [id])
+  owner     User?    @relation(fields: [userId], references: [id])
   userId    String?
 }
 
@@ -44,11 +45,12 @@ model Page {
   updatedAt DateTime @default(now()) @db.Timestamptz
   note      Note?    @relation(fields: [noteId], references: [id])
   noteId    String?
+
 }
 
 model Address {
   id     String  @id @default(uuid())
-  email  String  @db.VarChar(256)
+  email  String  @unique @db.VarChar(256)
   phone  String  @db.VarChar(16)
   mobile String? @db.VarChar(16)
   user   User?   @relation(fields: [userId], references: [id])

@@ -6,8 +6,8 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const signup = async (parent, args, context, info) => {
     try {
         const {address} = args.input
-        let salt = bcrypt.genSaltSync(10)
-        let password = bcrypt.hashSync(args.input.password, salt);
+        // let salt = bcrypt.genSaltSync(10)
+        let password = await bcrypt.hash(args.input.password, 10);
         const user = await context.prisma.user.create(
             {
                 data: {
@@ -33,7 +33,7 @@ const signup = async (parent, args, context, info) => {
 
 const login = async (parent, args, context, info) => {
     try {
-        const user = await context.prisma.user.findUnique({
+        const user = await context.prisma.user.findMany({
             where: {
                 OR: [
                         {
@@ -42,7 +42,7 @@ const login = async (parent, args, context, info) => {
                             } 
                         },
                         {
-                            userName: {equals: args.input?.nameName}
+                            userName: {equals: args.input?.userName}
                         }
                     ]
             }
@@ -60,7 +60,7 @@ const login = async (parent, args, context, info) => {
 
         }
 
-        const validPassword = await bcrypt.compare(args.input.password, user.password);
+        const validPassword = await bcrypt.compare(args.input.password, user[0].password);
 
         if(!validPassword) {
             throw new Error(`password not valid`)
@@ -70,7 +70,7 @@ const login = async (parent, args, context, info) => {
 
         return {
             token,
-            user
+            user: user[0]
         }
 
 
@@ -108,12 +108,12 @@ const deleteUser = async (parent, args, context, info) => {
 
 const createNote = async (parent, args, context, info) => {
     try {
-        const note = await context.prisma.note.create({
+        return await context.prisma.note.create({
             data: {
-                ...args.input,
-                owner: {
+                title: args.note.subject,
+                user: {
                     create: {
-                        id: ""
+                        id: "bd349c06-c003-4e8e-8191-08a7a9a10952"
                     }
                 }
             }
@@ -125,7 +125,12 @@ const createNote = async (parent, args, context, info) => {
 
 const updateNote = async (parent, args, context, info) => {
     try {
-        console.log("updateNote")
+        return await context.prisma.note.update({
+            where: {id: args.note.id},
+            data: {
+                ...args.note
+            }
+        })
     } catch (error) {
         return error
     }
@@ -141,7 +146,11 @@ const deleteNote = async (parent, args, context, info) => {
 
 const addPage = async (parent, args, context, info) => {
     try {
-        console.log("addPage")
+        return await context.prisma.page.create({
+            data: {
+                ...args.page
+            }
+        })
     } catch (error) {
         return error
     }
@@ -149,7 +158,12 @@ const addPage = async (parent, args, context, info) => {
 
 const editPage = async (parent, args, context, info) => {
     try {
-        console.log("editPage")
+        return await context.prisma.page.update({
+            where: {id: args.page.id},
+            data: {
+                ...args.page
+            }
+        })
     } catch (error) {
         return error
     }
