@@ -48,7 +48,7 @@ const login = async (parent, args, context, info) => {
             }
         });
 
-        if(!user){
+        if(!user && !user[0]){
             if(args.input.userName) {
                 throw new Error(`username ${args.input.userName} does not exist`)
             }
@@ -60,7 +60,7 @@ const login = async (parent, args, context, info) => {
 
         }
 
-        const validPassword = await bcrypt.compare(args.input.password, user[0].password);
+        const validPassword = await bcrypt.compare(args.input.password, user[0]?.password);
 
         if(!validPassword) {
             throw new Error(`password not valid`)
@@ -100,20 +100,27 @@ const updateUser = async (parent, args, context, info) => {
 
 const deleteUser = async (parent, args, context, info) => {
     try {
-        console.log("signup")
+        let notes = await context.prisma.note.delete({
+            where: {userId: ""}
+        });
+
+        let address = await context.prisma.address.delete({
+            where: {userId: ""}
+        });
     } catch (error) {
         return error
     }
 }
 
 const createNote = async (parent, args, context, info) => {
+    const {title} = args.note;
     try {
         return await context.prisma.note.create({
             data: {
-                title: args.note.subject,
+                title,
                 user: {
-                    create: {
-                        id: "bd349c06-c003-4e8e-8191-08a7a9a10952"
+                    connect: {
+                        id: "a4cef2be-8578-4a10-9db7-114ae1ef2fa9"
                     }
                 }
             }
@@ -146,9 +153,16 @@ const deleteNote = async (parent, args, context, info) => {
 
 const addPage = async (parent, args, context, info) => {
     try {
+        const {title, body} = args.note;
         return await context.prisma.page.create({
             data: {
-                ...args.page
+                title,
+                body,
+                note: {
+                    connect: {
+                        id: "98bcab47-3f8b-4c6b-b4da-0aec082ea057"
+                    }
+                }
             }
         })
     } catch (error) {

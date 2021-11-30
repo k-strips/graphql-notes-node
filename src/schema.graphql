@@ -96,7 +96,7 @@ type Query {
 
 type Note {
   id: ID!
-  subject: String!
+  title: String!
   owner: User!
   pages: [Page!]
   created: Date!
@@ -109,11 +109,11 @@ type NoteConnection {
 }
 
 input CreateNoteInput {
-  subject: String!
+  title: String!
 }
 
 input UpdateNoteInput {
-  subject: String
+  title: String
 }
 
 input DeleteNoteInput {
@@ -127,7 +127,8 @@ input GetNoteInput {
 type Page {
   id: ID!
   title: String!
-  content: String!
+  body: String!
+  note: Note
   created: Date!
   lastUpdate: Date!
 }
@@ -139,12 +140,13 @@ type PageConnection {
 
 input AddPageInput {
   title: String
-  content: String!
+  body: String!
+  noteId: String!
 }
 
 input EditPageInput {
   title: String
-  content: String
+  body: String
 }
 
 input DeletePageInput {
@@ -236,7 +238,7 @@ input TableUserFilterInput {
 
 input TableNoteFilterInput {
   id: TableIDFilterInput
-  subject: TableStringFilterInput
+  title: TableStringFilterInput
   owner: TableUserFilterInput
   pages: TablePageFilterInput
   created: TableStringFilterInput
@@ -245,7 +247,7 @@ input TableNoteFilterInput {
 
 input TablePageFilterInput {
   id: TableIDFilterInput
-  subject: TableStringFilterInput
+  title: TableStringFilterInput
   owner: TableUserFilterInput
   pages: TablePageFilterInput
   created: TableStringFilterInput
