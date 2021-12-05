@@ -123,7 +123,7 @@ const createNote = async (parent, args, context, info) => {
                 title,
                 user: {
                     connect: {
-                        id: "a4cef2be-8578-4a10-9db7-114ae1ef2fa9"
+                        id: context.userId
                     }
                 }
             }
